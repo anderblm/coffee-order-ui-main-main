@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+    <style>
+        body {
+            background-color: green;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin: 50px auto;
+            padding: 20px;
+            background-color: brown;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border-bottom: 1px solid white;
+        }
+
+        th {
+            background-color: darkgreen;
+        }
+
+        .thank-you {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Order Confirmation</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Beverage</th>
+                    <th>Condiments</th>
+                </tr>
+            </thead>
+            <tbody id="order-details">
+            </tbody>
+        </table>
+        <div id="total-price"></div>
+        <div class="thank-you">Thank you for your order!</div>
+    </div>
+    <script src = "configuration.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            displayOrderDetails();
+        });
+
+        function displayOrderDetails() {
+            var orderDetails = JSON.parse(sessionStorage.getItem('order'));
+            var orderTable = document.getElementById('order-details');
+            var totalPriceDisplay = document.getElementById('total-price');
+            if (orderDetails) {
+                var beverageRow = '<tr><td>' + orderDetails.beverage + '</td><td>' + orderDetails.condiments.join(', ') + '</td></tr>';
+                orderTable.innerHTML = beverageRow;
+
+                var totalPrice = calculateTotalPrice(orderDetails);
+                totalPriceDisplay.innerText = 'Total Price: $' + totalPrice.toFixed(2);
+            }
+        }
+
+        function calculateTotalPrice(order) {
+            var totalPrice = 0;
+            // Add price of beverage
+            totalPrice += getPriceForBeverage(order.beverage);
+            // Add price of condiments
+            order.condiments.forEach(function (condiment) {
+                totalPrice += getPriceForCondiment(condiment);
+            });
+            return totalPrice;
+        }
+
+        function getPriceForBeverage(beverage) {
+            switch (beverage) {
+                case 'HouseBlend':
+                    return 1.65;
+                case 'Decaf':
+                    return 1.28;
+                case 'DarkRoast':
+                    return 1.99;
+                case 'Espresso':
+                    return 1.34;
+                default:
+                    return 0;
+            }
+        }
+
+        function getPriceForCondiment(condiment) {
+            switch (condiment) {
+                case 'Whip':
+                    return 0.25;
+                case 'Soy':
+                    return 0.27;
+                case 'Milk':
+                    return 0.4;
+                case 'Mocha':
+                    return 0.3;
+                default:
+                    return 0;
+            }
+        }
+    </script>
+</body>
+
+</html>
